@@ -1,0 +1,1 @@
+import React from 'react';import {motion} from 'framer-motion';export default function PageHero({eyebrow,title,text}){return <section className="page-hero"><div className="page-hero-bg"/><motion.div initial={{opacity:0,y:25}} animate={{opacity:1,y:0}} transition={{duration:.7}}><small>{eyebrow}</small><h1>{title}</h1><p>{text}</p></motion.div></section>}

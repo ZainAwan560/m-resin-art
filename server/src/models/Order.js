@@ -1,0 +1,4 @@
+import mongoose from 'mongoose';
+const itemSchema=new mongoose.Schema({productId:{type:mongoose.Schema.Types.ObjectId,ref:'Product',required:true},name:String,unitPrice:Number,quantity:{type:Number,min:1},customization:mongoose.Schema.Types.Mixed,image:String},{_id:false});
+const schema=new mongoose.Schema({customer:{name:String,email:String,phone:String,address:String,area:String,city:String,postalCode:String,notes:String},items:[itemSchema],subtotal:Number,deliveryCharge:Number,total:Number,payment:{status:{type:String,enum:['pending','paid','failed','refunded'],default:'pending'},provider:String,reference:String},status:{type:String,enum:['Pending','Confirmed','Processing','Shipped','Delivered','Cancelled'],default:'Pending'},createdAt:{type:Date,default:Date.now},updatedAt:{type:Date,default:Date.now}},{timestamps:true});
+export default mongoose.model('Order',schema);

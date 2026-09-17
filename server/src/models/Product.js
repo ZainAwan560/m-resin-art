@@ -1,0 +1,3 @@
+import mongoose from 'mongoose';
+const schema=new mongoose.Schema({name:{type:String,required:true,trim:true},slug:{type:String,unique:true},category:{type:String,enum:['keychains','bookmarks','custom'],required:true},description:{type:String,required:true,trim:true},price:{type:Number,min:0,required:true},deliveryIncluded:{type:Boolean,default:false},images:{type:[String],required:true,validate:value=>value.length>0},stock:{type:Number,min:0,required:true},available:{type:Boolean,default:true},featured:{type:Boolean,default:false},customizable:{type:Boolean,default:false},options:[{name:String,type:{type:String,default:'text'},required:Boolean}]},{timestamps:true});
+export default mongoose.model('Product',schema);

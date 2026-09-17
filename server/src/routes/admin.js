@@ -1,0 +1,6 @@
+import {Router} from 'express';import bcrypt from 'bcryptjs';import Admin from '../models/Admin.js';import Order from '../models/Order.js';import Product from '../models/Product.js';import CustomOrder from '../models/CustomOrder.js';import {requireAdmin} from '../middleware/auth.js';
+const r=Router();r.use(requireAdmin);
+r.get('/overview',async(req,res,next)=>{try{const [orders,products,custom]=await Promise.all([Order.countDocuments(),Product.countDocuments(),CustomOrder.countDocuments()]);const revenue=await Order.aggregate([{$match:{status:{$ne:'Cancelled'},'payment.status':'paid'}},{$group:{_id:null,total:{$sum:'$total'}}}]);res.json({orders,products,customOrders:custom,revenue:revenue[0]?.total||0})}catch(e){next(e)}});
+r.get('/customers',async(req,res,next)=>{try{const rows=await Order.aggregate([{$group:{_id:'$customer.email',name:{$first:'$customer.name'},phone:{$first:'$customer.phone'},orders:{$sum:1},spent:{$sum:'$total'}}},{$sort:{orders:-1}}]);res.json(rows)}catch(e){next(e)}});
+r.post('/password',async(req,res,next)=>{try{const a=await Admin.findById(req.admin.sub);if(!a||!(await bcrypt.compare(req.body.currentPassword||'',a.passwordHash)))return res.status(400).json({message:'Current password is incorrect'});a.passwordHash=await bcrypt.hash(req.body.newPassword,12);await a.save();res.json({ok:true})}catch(e){next(e)}});
+export default r;
